@@ -1,0 +1,21 @@
+{
+  "name": "task-integrator-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nihal Dias",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jira-client": "^8.2.2",
+    "jira-connector": "^3.1.0",
+    "path": "^0.12.7",
+    "pg": "^8.9.0",
+    "request": "^2.88.2",
+    "tough-cookie-filestore": "^0.0.1"
+  }
+}
