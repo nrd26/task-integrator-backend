@@ -1,35 +1,27 @@
-const Pool = require('pg').Pool
-const dotenv = require('dotenv');
-dotenv.config();
-
-const pool = new Pool({
-    user: process.env.PG_USER,
-    host: process.env.PG_HOST,
-    database: process.env.PG_DATABASE,
-    password: process.env.PG_PASSWORD,
-    port: process.env.PG_PORT
-  })
+const pgClient = require('../config/pgConfig')
 
 
 //PgSQL GET
   async function pgGet() {
-    var results = []
-    pool.query('SELECT * FROM tasks ORDER BY id ASC', (error, pgResults) => {
+    return new Promise((resolve, reject) => {
+      let results = []
+      pgClient.query('SELECT * FROM tasks ORDER BY id ASC', (error, pgResults) => {
         if (error) {
-          throw error
+          reject(error);
         }
         for (let index = 0; index < pgResults.rowCount; index++) {
           results.push(pgResults.rows[index])
         }
+        resolve(results)
       })
-      return results;
+    })
   }
 
   //PgSQL POST
   async function pgPost(task, platform, response) {
-    pool.query('INSERT INTO tasks (task, platform) VALUES ($1, $2) RETURNING *', [task, platform], (error, results) => {
+    pgClient.query('INSERT INTO tasks (task, platform) VALUES ($1, $2) RETURNING *', [task, platform], (error, results) => {
         if (error) {
-          throw error
+          response.send(`Could not add task ${task} in ${platform} due to error ${error}`)
         }
         response.status(201).send(`Task added with ID: ${results.rows[0].id}`)
       })
@@ -37,12 +29,12 @@ const pool = new Pool({
 
   //PgSQL PUT
   async function pgPut(id, task, platform, response) {
-    pool.query(
+    pgClient.query(
         'UPDATE tasks SET task = $1, platform = $2 WHERE id = $3',
         [task, platform, id],
         (error, results) => {
           if (error) {
-            throw error
+            response.send(`Could not edit task ${task} with id ${id} in ${platform} due to error ${error}`)
           }
           response.status(200).send(`Task modified with ID: ${id}`)
         }
@@ -51,9 +43,9 @@ const pool = new Pool({
 
   //PgSQL DELETE
   async function pgDelete(id, response) {
-    pool.query('DELETE FROM tasks WHERE id = $1', [id], (error, results) => {
+    pgClient.query('DELETE FROM tasks WHERE id = $1', [id], (error, results) => {
         if (error) {
-          throw error
+          response.send(`Could not delete task  with id ${id} in Cubyts due to error ${error}`)
         }
         response.status(200).send(`Task deleted with ID: ${id}`)
       })

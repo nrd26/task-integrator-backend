@@ -19,6 +19,8 @@
     "path": "^0.12.7",
     "pg": "^8.9.0",
     "request": "^2.88.2",
+    "sequelize": "^6.30.0",
+    "sqlite3": "^5.1.6",
     "tough-cookie-filestore": "^0.0.1"
   }
 }

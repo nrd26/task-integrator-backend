@@ -1,16 +1,17 @@
-const pgTasks = require('../controllers/pgsql')
-const jiraTasks = require('../controllers/jira')
-const asanaTasks = require('../controllers/asana')
+const pgTasks = require('../services/pgsql')
+const jiraTasks = require('../services/jira')
+const asanaTasks = require('../services/asana')
 
 // GET all tasks
 const getTasks = async function (request, response) {
-  var pgGetResult = await pgTasks.pgGet();
-  var jiraGetResult = await jiraTasks.jiraGet();
-  var asanaGetResult = await asanaTasks.asanaGet();
+  const pgGetResult =  pgTasks.pgGet();
+  const jiraGetResult =  jiraTasks.jiraGet(response);
+  const asanaGetResult =  asanaTasks.asanaGet(response);
 
-  var results = [...pgGetResult, ...jiraGetResult,...asanaGetResult];
+  const results = await Promise.all(
+    [pgGetResult, jiraGetResult, asanaGetResult]);
 
-  response.status(200).json(results)
+  response.status(200).json(results.flat())
   }
 
 //   POST a new Task
